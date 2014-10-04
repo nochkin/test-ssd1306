@@ -1,15 +1,15 @@
 CC = clang
-CFLAGS = -O0 -g -Wall
+CFLAGS = -O0 -g -Wall -I.
 MKDIR = mkdir
 RM = rm
 FIND = find
 
 OBJDIR = .obj
 
-SRC = bcm2835.c main.c
-SRCXX = SSD1306.cpp
+SRC = bcm2835.c main.c glcdfont.c
+SRCXX = Adafruit_GFX.cpp Adafruit_SSD1306.cpp
 INC = bcm2835.h
-INCXX = SSD1306.h
+INCXX = SSD1306.h Adafruit_GFX.h Adafruit_SSD1306.h
 OBJ = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.c.o))
 OBJXX = $(patsubst %,$(OBJDIR)/%,$(SRCXX:.cpp=.cpp.o))
 BINARY = ssd1306-mpc
