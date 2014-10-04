@@ -16,12 +16,14 @@ BSD license, check license.txt for more information
 All text above, and the splash screen must be included in any redistribution
 *********************************************************************/
 
+#ifdef ARDUINO
 #if ARDUINO >= 100
  #include "Arduino.h"
  #define WIRE_WRITE Wire.write
 #else
  #include "WProgram.h"
   #define WIRE_WRITE Wire.send
+#endif
 #endif
 
 #ifdef __SAM3X8E__
@@ -32,7 +34,11 @@ All text above, and the splash screen must be included in any redistribution
   typedef uint8_t PortMask;
 #endif
 
+#ifdef ARDUINO
 #include <SPI.h>
+#else
+#endif
+
 #include <Adafruit_GFX.h>
 
 #define BLACK 0

@@ -16,6 +16,7 @@ BSD license, check license.txt for more information
 All text above, and the splash screen below must be included in any redistribution
 *********************************************************************/
 
+#ifdef ARDUINO
 #include <avr/pgmspace.h>
 #ifndef __SAM3X8E__
  #include <util/delay.h>
@@ -23,6 +24,7 @@ All text above, and the splash screen below must be included in any redistributi
 #include <stdlib.h>
 
 #include <Wire.h>
+#endif
 
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
