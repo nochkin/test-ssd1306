@@ -173,6 +173,23 @@ Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
   rst = reset;
 }
   
+Adafruit_SSD1306::Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS, uint8_t OLED_TYPE) :
+Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
+	rst = RST;
+	dc = DC;
+	cs = CS;
+	// Init & Configure Raspberry PI SPI
+	bcm2835_spi_begin();
+	bcm2835_spi_chipSelect(cs);
+	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
+	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
+	// 16 MHz SPI bus, but Worked at 62 MHz also
+	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);
+	// Set the pin that will control DC as output
+	bcm2835_gpio_fsel(dc, BCM2835_GPIO_FSEL_OUTP);
+	// Setup reset pin direction as output
+	bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
+}
 
 void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
   _vccstate = vccstate;

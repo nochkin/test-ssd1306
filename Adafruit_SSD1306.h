@@ -24,6 +24,8 @@ All text above, and the splash screen must be included in any redistribution
  #include "WProgram.h"
   #define WIRE_WRITE Wire.send
 #endif
+#else
+#include <stdint.h>
 #endif
 
 #ifdef __SAM3X8E__
@@ -36,7 +38,6 @@ All text above, and the splash screen must be included in any redistribution
 
 #ifdef ARDUINO
 #include <SPI.h>
-#else
 #endif
 
 #include <Adafruit_GFX.h>
@@ -139,6 +140,7 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
   Adafruit_SSD1306(int8_t SID, int8_t SCLK, int8_t DC, int8_t RST, int8_t CS);
   Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS);
   Adafruit_SSD1306(int8_t RST);
+  Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS, uint8_t OLED_TYPE);
 
   void begin(uint8_t switchvcc = SSD1306_SWITCHCAPVCC, uint8_t i2caddr = SSD1306_I2C_ADDRESS, bool reset=true);
   void ssd1306_command(uint8_t c);

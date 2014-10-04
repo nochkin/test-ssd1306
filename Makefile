@@ -1,13 +1,15 @@
 CC = clang
 CFLAGS = -O0 -g -Wall -I.
+LINK = clang++  -lc
+LDFLAGS =
 MKDIR = mkdir
 RM = rm
 FIND = find
 
 OBJDIR = .obj
 
-SRC = bcm2835.c main.c glcdfont.c
-SRCXX = Adafruit_GFX.cpp Adafruit_SSD1306.cpp
+SRC = bcm2835.c glcdfont.c
+SRCXX = main.cpp Adafruit_GFX.cpp Adafruit_SSD1306.cpp
 INC = bcm2835.h
 INCXX = SSD1306.h Adafruit_GFX.h Adafruit_SSD1306.h
 OBJ = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.c.o))
@@ -31,9 +33,9 @@ $(OBJDIR)/%.cpp.o: %.cpp $(INCXX)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(BINARY): $(OBJ) $(OBJXX)
-	$(CC) $(CFLAGS) -o $(BINARY) $^
+	$(LINK) $(LDFLAGS) -o $(BINARY) $^
 
 clean:
-	$(FIND) $(OBJDIR) -type f -rm {} \;
-	$(RM) -rf $(BINARY)
+	$(FIND) $(OBJDIR) -type f -exec rm -f {} \;
+	$(RM) -f $(BINARY)
 
