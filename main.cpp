@@ -12,12 +12,21 @@
 #define OLED_SPI_CS    BCM2835_SPI_CS1   /* Default Chip Select */
 #define OLED_I2C_RESET RPI_V2_GPIO_P1_22 /* GPIO 25 pin 12  */
 
-Adafruit_SSD1306 display(OLED_SPI_DC,OLED_SPI_RESET,OLED_SPI_CS, 2);
-
 int main(int argc, char *argv[])
 {
+	// Adafruit_SSD1306 display(OLED_SPI_DC,OLED_SPI_RESET,OLED_SPI_CS);
+	Adafruit_SSD1306 display(OLED_I2C_RESET, 0x3c);
+
 	display.begin();
 	display.clearDisplay();
+
+	// display.drawPixel(10, 10, WHITE);
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  display.setCursor(0,0);
+  display.write('t');
+    display.drawCircle(3, 3, 8, WHITE);
+	display.display();
 
 	return 0;
 }

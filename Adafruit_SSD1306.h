@@ -139,11 +139,13 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
  public:
   Adafruit_SSD1306(int8_t SID, int8_t SCLK, int8_t DC, int8_t RST, int8_t CS);
   Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS);
-  Adafruit_SSD1306(int8_t RST);
-  Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS, uint8_t OLED_TYPE);
+  Adafruit_SSD1306(int8_t RST, uint8_t ADDR);
 
   void begin(uint8_t switchvcc = SSD1306_SWITCHCAPVCC, uint8_t i2caddr = SSD1306_I2C_ADDRESS, bool reset=true);
-  void ssd1306_command(uint8_t c);
+  void ssd1306_command_old(uint8_t c);
+	void ssd1306_command(uint8_t c);
+	void ssd1306_command(uint8_t c0, uint8_t c1);
+	void ssd1306_command(uint8_t c0, uint8_t c1, uint8_t c2);
   void ssd1306_data(uint8_t c);
 
   void clearDisplay(void);
@@ -166,6 +168,8 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
 
  private:
   int8_t _i2caddr, _vccstate, sid, sclk, dc, rst, cs;
+	boolean isSPI(void);
+	boolean isI2C(void);
   void fastSPIwrite(uint8_t c);
   void fastSPIwrite(char* tbuf, uint32_t len);
   void fastI2Cwrite(uint8_t c);

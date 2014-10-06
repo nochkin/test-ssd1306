@@ -25,6 +25,7 @@ All text above, and the splash screen below must be included in any redistributi
 
 #include <Wire.h>
 #else
+#include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <bcm2835.h>
@@ -107,6 +108,12 @@ static uint8_t buffer[SSD1306_LCDHEIGHT * SSD1306_LCDWIDTH / 8] = {
 };
 
 
+inline boolean Adafruit_SSD1306::isSPI(void) {
+	return (cs != -1 ? true : false);
+}
+inline boolean Adafruit_SSD1306::isI2C(void) {
+	return (cs == -1 ? true : false);
+}
 // Low level I2C and SPI Write function
 inline void Adafruit_SSD1306::fastI2Cwrite(uint8_t d) {
 	bcm2835_spi_transfer(d);
@@ -159,36 +166,49 @@ Adafruit_SSD1306::Adafruit_SSD1306(int8_t SID, int8_t SCLK, int8_t DC, int8_t RS
 }
 
 // constructor for hardware SPI - we indicate DataCommand, ChipSelect, Reset 
-Adafruit_SSD1306::Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS) : Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
-  dc = DC;
-  rst = RST;
-  cs = CS;
-  hwSPI = true;
-}
-
-// initializer for I2C - we only indicate the reset pin!
-Adafruit_SSD1306::Adafruit_SSD1306(int8_t reset) :
-Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
-  sclk = dc = cs = sid = -1;
-  rst = reset;
-}
-  
-Adafruit_SSD1306::Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS, uint8_t OLED_TYPE) :
+Adafruit_SSD1306::Adafruit_SSD1306(int8_t DC, int8_t RST, int8_t CS) :
 Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
 	rst = RST;
 	dc = DC;
 	cs = CS;
 	// Init & Configure Raspberry PI SPI
-	bcm2835_spi_begin();
-	bcm2835_spi_chipSelect(cs);
-	bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
-	bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
-	// 16 MHz SPI bus, but Worked at 62 MHz also
-	bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);
-	// Set the pin that will control DC as output
-	bcm2835_gpio_fsel(dc, BCM2835_GPIO_FSEL_OUTP);
-	// Setup reset pin direction as output
-	bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
+	if (bcm2835_init()) {
+		bcm2835_spi_begin();
+		// bcm2835_spi_chipSelect(cs);
+		bcm2835_spi_setBitOrder(BCM2835_SPI_BIT_ORDER_MSBFIRST);
+		bcm2835_spi_setDataMode(BCM2835_SPI_MODE0);
+		// 16 MHz SPI bus, but Worked at 62 MHz also
+		bcm2835_spi_setClockDivider(BCM2835_SPI_CLOCK_DIVIDER_16);
+		// Set the pin that will control DC as output
+		bcm2835_gpio_fsel(dc, BCM2835_GPIO_FSEL_OUTP);
+		// Setup reset pin direction as output
+		bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
+	} else {
+		printf("Failed init bcm2835\n");
+	}
+}
+
+// initializer for I2C - we only indicate the reset pin!
+Adafruit_SSD1306::Adafruit_SSD1306(int8_t RST, uint8_t ADDR) :
+Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LCDHEIGHT) {
+  sid = dc = cs = -1; // DC and chip Select do not exist in I2C
+  rst = RST;
+
+	if (bcm2835_init()) {
+		// Init & Configure Raspberry PI I2C
+		bcm2835_i2c_begin();
+			
+		bcm2835_i2c_setSlaveAddress(ADDR);
+			
+		// Set clock to 400 KHz
+		// does not seem to work, will check this later
+		// bcm2835_i2c_set_baudrate(400000);
+
+	  // Setup reset pin direction as output
+	  bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
+	} else {
+		printf("failed init bcm2835\n");
+	}
 }
 
 void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
@@ -334,6 +354,23 @@ void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
     ssd1306_command(0x40);
     ssd1306_command(SSD1306_DISPLAYALLON_RESUME);           // 0xA4
     ssd1306_command(SSD1306_NORMALDISPLAY);                 // 0xA6
+	/*
+	ssd1306_command(SSD1306_DISPLAYOFF);                    // 0xAE
+	ssd1306_command(SSD1306_SETDISPLAYCLOCKDIV, 0x80);      // 0xD5 + the suggested ratio 0x80
+	ssd1306_command(SSD1306_SETMULTIPLEX, 0x3f); 
+	ssd1306_command(SSD1306_SETDISPLAYOFFSET, 0x00);        // 0xD3 + no offset
+	ssd1306_command(SSD1306_SETSTARTLINE | 0x0);            // line #0
+	ssd1306_command(SSD1306_CHARGEPUMP, 0x14); 
+	ssd1306_command(SSD1306_MEMORYMODE, 0x00);              // 0x20 0x0 act like ks0108
+	ssd1306_command(SSD1306_SEGREMAP | 0x1);
+	ssd1306_command(SSD1306_COMSCANDEC);
+	ssd1306_command(SSD1306_SETCOMPINS, 0x12);  // 0xDA
+	ssd1306_command(SSD1306_SETCONTRAST, 0xcf);
+	ssd1306_command(SSD1306_SETPRECHARGE, 0xf1); // 0xd9
+	ssd1306_command(SSD1306_SETVCOMDETECT, 0x40);  // 0xDB
+	ssd1306_command(SSD1306_DISPLAYALLON_RESUME);    // 0xA4
+	ssd1306_command(SSD1306_NORMALDISPLAY);         // 0xA6
+	*/
   #endif
 
   #if defined SSD1306_96_16
@@ -373,6 +410,11 @@ void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
     ssd1306_command(SSD1306_NORMALDISPLAY);                 // 0xA6
   #endif
 
+	ssd1306_command( 0x21, 0, 127 ); 
+	ssd1306_command( 0x22, 0,   7 ); 
+	stopscroll();
+
+	clearDisplay();
   ssd1306_command(SSD1306_DISPLAYON);//--turn on oled panel
 }
 
@@ -385,26 +427,14 @@ void Adafruit_SSD1306::invertDisplay(uint8_t i) {
   }
 }
 
-void Adafruit_SSD1306::ssd1306_command(uint8_t c) { 
+void Adafruit_SSD1306::ssd1306_command_old(uint8_t c) { 
   if (sid != -1)
   {
     // SPI
-#ifdef ARDUINO
-    //digitalWrite(cs, HIGH);
-    *csport |= cspinmask;
-    //digitalWrite(dc, LOW);
-    *dcport &= ~dcpinmask;
-    //digitalWrite(cs, LOW);
-    *csport &= ~cspinmask;
-    fastSPIwrite(c);
-    //digitalWrite(cs, HIGH);
-    *csport |= cspinmask;
-#else
     // Setup D/C line to low to switch to command mode
     bcm2835_gpio_write(dc, LOW);
     // Write Data on SPI
     fastSPIwrite(c);
-#endif
   }
   else
   {
@@ -423,6 +453,85 @@ void Adafruit_SSD1306::ssd1306_command(uint8_t c) {
     // Write Data on I2C
     fastI2Cwrite(buff, sizeof(buff));
 #endif
+  }
+}
+
+void Adafruit_SSD1306::ssd1306_command(uint8_t c) 
+{ 
+	// Is SPI
+  if (isSPI())
+  {
+		// Setup D/C line to low to switch to command mode
+	  bcm2835_gpio_write(dc, LOW);
+
+		// Write Data on SPI
+    fastSPIwrite(c);
+  }
+  // so I2C
+  else
+  {
+		char buff[2] ;
+		
+		// Clear D/C to switch to command mode
+		buff[0] = 0x00; 
+		buff[1] = c;
+		
+		// Write Data on I2C
+		fastI2Cwrite(buff, sizeof(buff))	;
+  }
+}
+
+void Adafruit_SSD1306::ssd1306_command(uint8_t c0, uint8_t c1) 
+{ 
+	char buff[3] ;
+	buff[1] = c0;
+	buff[2] = c1;
+
+	// Is SPI
+  if (isSPI())
+  {
+		// Setup D/C line to low to switch to command mode
+	  bcm2835_gpio_write(dc, LOW);
+
+		// Write Data
+    fastSPIwrite(&buff[1], 2);
+  }
+  // I2C
+  else
+  {
+		// Clear D/C to switch to command mode
+		buff[0] = 0x00;
+
+		// Write Data on I2C
+		fastI2Cwrite(buff, 3)	;
+  }
+}
+
+void Adafruit_SSD1306::ssd1306_command(uint8_t c0, uint8_t c1, uint8_t c2) 
+{ 
+	char buff[4] ;
+		
+	buff[1] = c0;
+	buff[2] = c1;
+	buff[3] = c2;
+
+	// Is SPI
+  if (isSPI())
+  {
+		// Setup D/C line to low to switch to command mode
+	  bcm2835_gpio_write(dc, LOW);
+
+		// Write Data
+    fastSPIwrite(&buff[1], 3);
+  }
+  // I2C
+  else
+  {
+		// Clear D/C to switch to command mode
+		buff[0] = 0x00; 
+
+		// Write Data on I2C
+		fastI2Cwrite(buff, sizeof(buff))	;
   }
 }
 
@@ -619,17 +728,16 @@ void Adafruit_SSD1306::display(void) {
     TWBR = twbrbackup;
 #endif
 #else
+	uint8_t * p = buffer;
     char buff[17];
     uint8_t x;
 
     // Setup D/C to switch to data mode
     buff[0] = 0x40;
-    for (uint16_t i=0; i<(SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8); i++) {
+    for (uint16_t i=0; i<(SSD1306_LCDWIDTH*SSD1306_LCDHEIGHT/8); i+=16) {
       for (uint8_t x=1; x<=16; x++) {
-	      buff[x] = buffer[i];
-	      i++;
+	      buff[x] = *p++;
       }
-      i--;
       fastI2Cwrite(buff, 17);
     }
 #endif // ARDUINO
