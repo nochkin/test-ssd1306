@@ -1,6 +1,7 @@
 CC = clang
+CXX = clang++
 CFLAGS = -O0 -g -Wall -I.
-LINK = clang++  -lc
+LINK = clang++
 LDFLAGS =
 MKDIR = mkdir
 RM = rm
@@ -30,7 +31,7 @@ $(OBJDIR)/%.c.o: %.c $(INC)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 $(OBJDIR)/%.cpp.o: %.cpp $(INCXX)
-	$(CC) $(CFLAGS) -o $@ -c $<
+	$(CXX) $(CFLAGS) -o $@ -c $<
 
 $(BINARY): $(OBJ) $(OBJXX)
 	$(LINK) $(LDFLAGS) -o $(BINARY) $^

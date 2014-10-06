@@ -419,7 +419,7 @@ void Adafruit_SSD1306::begin(uint8_t vccstate, uint8_t i2caddr, bool reset) {
 }
 
 
-void Adafruit_SSD1306::invertDisplay(uint8_t i) {
+void Adafruit_SSD1306::invertDisplay(boolean i) {
   if (i) {
     ssd1306_command(SSD1306_INVERTDISPLAY);
   } else {
@@ -730,7 +730,6 @@ void Adafruit_SSD1306::display(void) {
 #else
 	uint8_t * p = buffer;
     char buff[17];
-    uint8_t x;
 
     // Setup D/C to switch to data mode
     buff[0] = 0x40;
