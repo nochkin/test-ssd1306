@@ -24,13 +24,13 @@ MPClient::~MPClient()
 	delete mpd_info;
 }
 
-bool MPClient::connect()
+int MPClient::connect()
 {
 	my_mpd_conn = mpd_connection_new(mpd_host.empty() ? 0 : mpd_host.c_str(), mpd_port, 30000);
 	if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
-		return false;
+		return 1;
 	}
-	return true;
+	return 0;
 }
 
 void MPClient::update_status()

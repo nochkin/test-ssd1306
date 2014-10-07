@@ -38,7 +38,7 @@ class MPClient
 		MPClient();
 		MPClient(std::string host, uint16_t);
 		~MPClient();
-		bool connect();
+		int connect();
 		void update_status();
 
 		int get_info_volume();
