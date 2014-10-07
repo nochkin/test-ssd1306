@@ -26,6 +26,7 @@ All text above, and the splash screen must be included in any redistribution
 #endif
 #else
 #include <stdint.h>
+#include <bcm2835.h>
 #endif
 
 #ifdef __SAM3X8E__
@@ -41,6 +42,14 @@ All text above, and the splash screen must be included in any redistribution
 #endif
 
 #include <Adafruit_GFX.h>
+
+// Configuration pins
+#define OLED_SPI_RESET RPI_V2_GPIO_P1_22 /* GPIO 25 pin 22  */
+#define OLED_SPI_DC    RPI_V2_GPIO_P1_18 /* GPIO 24 pin 18  */
+#define OLED_SPI_CS0   BCM2835_SPI_CS0   /* Chip Select CE0 */
+#define OLED_SPI_CS1   BCM2835_SPI_CS1   /* Chip Select CE1 */
+#define OLED_SPI_CS    BCM2835_SPI_CS1   /* Default Chip Select */
+#define OLED_I2C_RESET RPI_V2_GPIO_P1_22 /* GPIO 25 pin 12  */
 
 #define BLACK 0
 #define WHITE 1
@@ -146,9 +155,9 @@ class Adafruit_SSD1306 : public Adafruit_GFX {
 		Adafruit_SSD1306();
 
 		// SPI
-		int init(int8_t DC, int8_t RST, int8_t CS);
+		int init_spi(int8_t DC = OLED_SPI_DC, int8_t RST = OLED_SPI_RESET, int8_t CS = OLED_SPI_CS);
 		// I2C
-		int init(int8_t RST, uint8_t ADDR = SSD1306_I2C_ADDRESS);
+		int init_i2c(int8_t RST = OLED_I2C_RESET, uint8_t ADDR = SSD1306_I2C_ADDRESS);
 
 		interface_t get_interface();
 		void ssd1306_command_old(uint8_t c);

@@ -150,7 +150,7 @@ Adafruit_SSD1306::Adafruit_SSD1306() : Adafruit_GFX(SSD1306_LCDWIDTH, SSD1306_LC
 }
 
 // constructor for hardware SPI - we indicate DataCommand, ChipSelect, Reset 
-int Adafruit_SSD1306::init(int8_t DC, int8_t RST, int8_t CS) {
+int Adafruit_SSD1306::init_spi(int8_t DC, int8_t RST, int8_t CS) {
 	rst = RST;
 	dc = DC;
 	cs = CS;
@@ -176,7 +176,7 @@ int Adafruit_SSD1306::init(int8_t DC, int8_t RST, int8_t CS) {
 }
 
 // initializer for I2C - we only indicate the reset pin!
-int Adafruit_SSD1306::init(int8_t RST, uint8_t ADDR) {
+int Adafruit_SSD1306::init_i2c(int8_t RST, uint8_t ADDR) {
 	sid = dc = cs = -1; // DC and chip Select do not exist in I2C
 	rst = RST;
 	_i2caddr = ADDR;
