@@ -1,22 +1,33 @@
-#include <mpd/connection.h>
-#include <mpd/status.h>
-#include <mpd/list.h>
-#include <mpd/player.h>
-#include <mpd/response.h>
-#include <mpd/song.h>
-
 #include <mpclient.h>
 
-MPClient::MPClient(char *host, uint16_t port)
+MPClient::MPClient()
+{
+	mpd_host = "";
+	mpd_port = 0;
+
+	mpd_info = new mpd_info_s;
+	mpd_info_song = new mpd_info_song_s;
+}
+
+MPClient::MPClient(std::string host, uint16_t port)
 {
 	mpd_host = host;
 	mpd_port = port;
+
+	mpd_info = new mpd_info_s;
+	mpd_info_song = new mpd_info_song_s;
+}
+
+MPClient::~MPClient()
+{
+	delete mpd_info_song;
+	delete mpd_info;
 }
 
 bool MPClient::connect()
 {
-	mpd_conn = mpd_connection_new(0, 0, 30000);
-	if (mpd_connection_get_error(mpd_conn) != MPD_ERROR_SUCCESS) {
+	my_mpd_conn = mpd_connection_new(mpd_host.empty() ? 0 : mpd_host.c_str(), mpd_port, 30000);
+	if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
 		return false;
 	}
 	return true;
@@ -24,30 +35,59 @@ bool MPClient::connect()
 
 void MPClient::update_status()
 {
-	mpd_command_list_begin(mpd_conn, true);
-	mpd_send_status(mpd_conn);
-	mpd_send_current_song(mpd_conn);
-	mpd_command_list_end(mpd_conn);
-	mpd_status = mpd_recv_status(mpd_conn);
-	if (mpd_status == 0) { // error
+	mpd_info_song->title = "";
+
+	mpd_command_list_begin(my_mpd_conn, true);
+	mpd_send_status(my_mpd_conn);
+	mpd_send_current_song(my_mpd_conn);
+	mpd_command_list_end(my_mpd_conn);
+	my_mpd_status = mpd_recv_status(my_mpd_conn);
+	if (my_mpd_status == 0) { // error
 	} else {
-		mpd_info->volume = mpd_status_get_volume(mpd_status);
-		mpd_info->state = mpd_status_get_state(mpd_status);
+		mpd_info->volume = mpd_status_get_volume(my_mpd_status);
+		mpd_info->state = mpd_status_get_state(my_mpd_status);
 		if (mpd_info->state == MPD_STATE_PLAY || mpd_info->state == MPD_STATE_PAUSE) {
-			mpd_info->elapsed_time = mpd_status_get_elapsed_time(mpd_status);
-			mpd_info->kbit_rate = mpd_status_get_kbit_rate(mpd_status);
+			mpd_info->elapsed_time = mpd_status_get_elapsed_time(my_mpd_status);
+			mpd_info_song->kbit_rate = mpd_status_get_kbit_rate(my_mpd_status);
 		}
-		mpd_audio_format = mpd_status_get_audio_format(mpd_status);
+		mpd_audio_format = mpd_status_get_audio_format(my_mpd_status);
+		if (mpd_audio_format != NULL) {
+			mpd_info_song->sample_rate = mpd_audio_format->sample_rate;
+			mpd_info_song->channels = mpd_audio_format->channels;
+			mpd_info_song->bits = mpd_audio_format->bits;
+		}
 
-		mpd_status_free(mpd_status);
+		mpd_status_free(my_mpd_status);
 
-		if (mpd_connection_get_error(mpd_conn) != MPD_ERROR_SUCCESS) {
+		if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
 			// errror
 		} else {
-			mpd_response_next(mpd_conn);
-			mpd_song = mpd_recv_song(mpd_conn);
+			mpd_response_next(my_mpd_conn);
+			my_mpd_song = mpd_recv_song(my_mpd_conn);
+			if (my_mpd_song != NULL) {
+				mpd_info_song->title = get_song_tag_or_empty(MPD_TAG_TITLE);
+				mpd_info_song->album = get_song_tag_or_empty(MPD_TAG_ALBUM);
+				mpd_info_song->artist = get_song_tag_or_empty(MPD_TAG_ARTIST);
+			}
 		}
 	}
+}
+
+void MPClient::loop()
+{
+	while(1) {
+		mpd_idle idle = mpd_run_idle(my_mpd_conn);
+		// if (idle == 0) continue;
+		printf("idle: %i\n", idle);
+		usleep(100000);
+	}
+}
+
+std::string MPClient::get_song_tag_or_empty(mpd_tag_type tag_type)
+{
+	const char *tag_value = mpd_song_get_tag(my_mpd_song, tag_type, 0);
+	std::string tag_value_str = tag_value == NULL ? "" : std::string(tag_value);
+	return tag_value_str;
 }
 
 int MPClient::get_info_volume()
@@ -67,11 +107,36 @@ uint16_t MPClient::get_info_elapsed_time()
 
 uint8_t MPClient::get_info_kbit_rate()
 {
-	return mpd_info->elapsed_time;
+	return mpd_info_song->kbit_rate;
+}
+
+uint32_t MPClient::get_info_sample_rate()
+{
+	return mpd_info_song->sample_rate;
+}
+
+uint8_t MPClient::get_info_channels()
+{
+	return mpd_info_song->channels;
+}
+
+uint8_t MPClient::get_info_bits()
+{
+	return mpd_info_song->bits;
 }
 
 std::string MPClient::get_info_title()
 {
-	return mpd_info->title;
+	return mpd_info_song->title;
+}
+
+std::string MPClient::get_info_album()
+{
+	return mpd_info_song->album;
+}
+
+std::string MPClient::get_info_artist()
+{
+	return mpd_info_song->artist;
 }
 
