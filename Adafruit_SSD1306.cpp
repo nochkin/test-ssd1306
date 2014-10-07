@@ -154,6 +154,8 @@ int Adafruit_SSD1306::init(int8_t DC, int8_t RST, int8_t CS) {
 	rst = RST;
 	dc = DC;
 	cs = CS;
+	_if_type = IF_SPI;
+
 	// Init & Configure Raspberry PI SPI
 	if (bcm2835_init()) {
 		bcm2835_spi_begin();
@@ -167,7 +169,6 @@ int Adafruit_SSD1306::init(int8_t DC, int8_t RST, int8_t CS) {
 		// Setup reset pin direction as output
 		bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
 		begin();
-		_if_type = IF_SPI;
 	} else {
 		return -1;
 	}
@@ -179,6 +180,7 @@ int Adafruit_SSD1306::init(int8_t RST, uint8_t ADDR) {
 	sid = dc = cs = -1; // DC and chip Select do not exist in I2C
 	rst = RST;
 	_i2caddr = ADDR;
+	_if_type = IF_I2C;
 
 	if (bcm2835_init()) {
 		// Init & Configure Raspberry PI I2C
@@ -193,7 +195,6 @@ int Adafruit_SSD1306::init(int8_t RST, uint8_t ADDR) {
 		// Setup reset pin direction as output
 		bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
 		begin();
-		_if_type = IF_I2C;
 	} else {
 		return -1;
 	}

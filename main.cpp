@@ -16,14 +16,14 @@ int main(int argc, char *argv[])
 {
 	// Adafruit_SSD1306 display(OLED_SPI_DC,OLED_SPI_RESET,OLED_SPI_CS);
 	Adafruit_SSD1306 display;
-	if (display.init(OLED_I2C_RESET, 0x3c) != 0) {
+	if (display.init(OLED_I2C_RESET) != 0) {
 		printf("failed init OLED\n");
 		return 2;
 	}
 
 	display.clearDisplay();
 
-	// display.drawPixel(10, 10, WHITE);
+	display.drawPixel(10, 10, WHITE);
 	display.setTextSize(1);
 	display.setTextColor(WHITE);
 	display.setCursor(0,0);
