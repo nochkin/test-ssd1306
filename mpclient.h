@@ -54,6 +54,7 @@ class MPClient
 		std::string get_info_artist();
 		std::string get_info_song_tag(mpd_tag_type tag_type);
 		void loop();
+		void set_callback_player(void (*callback_func)());
 	private:
 		std::string mpd_host;
 		uint16_t mpd_port;
@@ -66,6 +67,7 @@ class MPClient
 		struct mpd_info_s *mpd_info;
 		struct mpd_info_song_s *mpd_info_song;
 
+		void (*on_player)();
 		std::string get_song_tag_or_empty(mpd_tag_type tag_type);
 };
 

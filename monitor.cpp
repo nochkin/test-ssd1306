@@ -18,7 +18,7 @@ int Monitor::setup_display()
 	display.setTextColor(WHITE);
 	display.setCursor(0,0);
 	display.write('t');
-    display.drawCircle(3, 3, 8, WHITE);
+	display.drawCircle(3, 3, 8, WHITE);
 	display.display();
 
 	return 0;
@@ -33,9 +33,19 @@ int Monitor::setup_mpc()
 	return 0;
 }
 
+void notify_local() {
+	printf("notify local\n");
+}
 void Monitor::watch_loop()
 {
+	mpc_client.set_callback_player(notify_local);
+
 	mpc_client.loop();
+}
+
+void Monitor::notify()
+{
+	printf("notify\n");
 }
 
 void Monitor::update_status()

@@ -11,6 +11,7 @@ class Monitor
 		Monitor();
 		int setup_display();
 		int setup_mpc();
+		void notify();
 		void watch_loop();
 	private:
 		Adafruit_SSD1306 display;
