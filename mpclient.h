@@ -40,6 +40,7 @@ class MPClient
 		~MPClient();
 		int connect();
 		void update_status();
+		void print_status();
 
 		int get_info_volume();
 		uint8_t get_info_state();

@@ -71,6 +71,7 @@ void MPClient::update_status()
 			}
 		}
 	}
+	mpd_response_finish(my_mpd_conn);
 }
 
 void MPClient::loop()
@@ -78,9 +79,48 @@ void MPClient::loop()
 	while(1) {
 		mpd_idle idle = mpd_run_idle(my_mpd_conn);
 		// if (idle == 0) continue;
+		if ((idle & MPD_IDLE_PLAYER) > 0) {
+			update_status();
+			print_status();
+		}
 		printf("idle: %i\n", idle);
 		usleep(100000);
 	}
+}
+
+void MPClient::print_status()
+{
+	printf("mpc: volume: %i\n", get_info_volume());
+	printf("mpc: state: ");
+	switch (get_info_state()) {
+		case MPD_STATE_STOP:
+			printf("stop\n");
+			break;
+		case MPD_STATE_PLAY:
+			printf("play\n");
+			break;
+		case MPD_STATE_PAUSE:
+			printf("pause\n");
+			break;
+	}
+	printf("mpc: time: %i\n", get_info_elapsed_time());
+	printf("mpc: audio: %iHz/%ibit", get_info_sample_rate(), get_info_bits());
+	switch(get_info_channels()) {
+		case 0:
+			printf("\n");
+			break;
+		case 1:
+			printf("/mono\n");
+			break;
+		case 2:
+			printf("/stereo\n");
+			break;
+		default:
+			printf("/multi-channel\n");
+			break;
+	}
+	printf("mpc: title: %s\n", get_info_title().c_str());
+	printf("mpc: album: %s\n", get_info_album().c_str());
 }
 
 std::string MPClient::get_song_tag_or_empty(mpd_tag_type tag_type)
