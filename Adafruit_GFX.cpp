@@ -505,6 +505,30 @@ void Adafruit_GFX::setRotation(uint8_t x) {
   }
 }
 
+void Adafruit_GFX::printf(const char *format, ...) {
+	char buffer[64];
+	char *p = buffer;
+	int n;
+	va_list args;
+	va_start(args, format);
+	vsnprintf(buffer, sizeof(buffer)-1, format, args);
+	n = strlen(buffer);
+	while (*p != 0 && n-->0)
+	{
+		write ((uint8_t)*p++);
+	}
+	va_end(args);
+}
+
+void Adafruit_GFX::print(const char *string) {
+	const char *p = string;
+	int n = strlen(string);
+	while (*p != 0 && n-->0)
+	{
+		write ((uint8_t)*p++);
+	}
+}
+
 // Return the size of the display (per current rotation)
 int16_t Adafruit_GFX::width(void) const {
   return _width;

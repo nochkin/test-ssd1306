@@ -10,6 +10,9 @@
 #endif
 #else // Non-Arduino compilation
 #include <stdint.h>
+#include <stdarg.h>
+#include <cstdio>
+#include <cstring>
 #include <cstdlib>
 #define boolean bool
 #endif
@@ -67,6 +70,8 @@ class Adafruit_GFX
     setTextSize(uint8_t s),
     setTextWrap(boolean w),
     setRotation(uint8_t r);
+  void printf(const char *format, ...);
+  void print(const char *string);
 
 #if ARDUINO >= 100
   virtual size_t write(uint8_t);
