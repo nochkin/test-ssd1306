@@ -1,4 +1,5 @@
-#include <mpclient.h>
+#include "monitor.h"
+#include "mpclient.h"
 
 MPClient::MPClient()
 {
@@ -78,7 +79,7 @@ void MPClient::update_status()
 	mpd_response_finish(my_mpd_conn);
 }
 
-void MPClient::set_callback_player(void (*callback_func)())
+void MPClient::set_callback_player(void (Monitor::*callback_func)())
 {
 	on_player = callback_func;
 }
@@ -92,7 +93,8 @@ void MPClient::loop()
 			update_status();
 			print_status();
 			if (on_player != NULL) {
-				(on_player());
+				Monitor mon_instance;
+				(mon_instance.*on_player)();
 			}
 		}
 		printf("idle: %i\n", idle);

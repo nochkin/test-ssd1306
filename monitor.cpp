@@ -33,12 +33,10 @@ int Monitor::setup_mpc()
 	return 0;
 }
 
-void notify_local() {
-	printf("notify local\n");
-}
 void Monitor::watch_loop()
 {
-	mpc_client.set_callback_player(notify_local);
+	void (Monitor::*notifyCB)() = &Monitor::notify;
+	mpc_client.set_callback_player(notifyCB);
 
 	mpc_client.loop();
 }

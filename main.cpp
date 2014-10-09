@@ -1,7 +1,5 @@
 #include <stdio.h>
 
-#include <mpd/status.h>
-
 #include "monitor.h"
 
 int main(int argc, char *argv[])
