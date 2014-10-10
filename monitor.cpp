@@ -39,7 +39,6 @@ void Monitor::watch_loop()
 	on_player();
 
 	void (Monitor::*playerCB)() = &Monitor::on_player;
-	// mpc_client.set_callback_player(playerCB);
 	mpc_client.set_callback_player(this, playerCB);
 
 	mpc_client.loop();
@@ -47,21 +46,20 @@ void Monitor::watch_loop()
 
 void Monitor::on_player()
 {
-	printf("notify\n");
 	display.clearDisplay();
 	display.setTextColor(WHITE);
 	display.setTextSize(1);
-	// display.setTextWrap(true);
+	display.setTextWrap(true);
 	switch (mpc_client.get_info_state()) {
 		case MPD_STATE_STOP:
-			display.fillRect(1, 1, 5, 5, WHITE);
+			display.fillRect(0, 0, 6, 6, WHITE);
 			break;
 		case MPD_STATE_PLAY:
 			display.fillTriangle(0, 0, 6, 3, 0, 6, WHITE);
 			break;
 		case MPD_STATE_PAUSE:
-			display.fillRect(0, 0, 2, 5, WHITE);
-			display.fillRect(4, 1, 2, 5, WHITE);
+			display.fillRect(0, 0, 2, 6, WHITE);
+			display.fillRect(4, 0, 2, 6, WHITE);
 			break;
 	}
 

@@ -94,9 +94,8 @@ void MPClient::loop()
 		// if (idle == 0) continue;
 		if ((idle & MPD_IDLE_PLAYER) > 0) {
 			update_status();
-			print_status();
+			// print_status();
 			if ((on_player_class != NULL) && (on_player_cb != NULL)) {
-				// Monitor mon_instance;
 				(*on_player_class.*on_player_cb)();
 			}
 		}
