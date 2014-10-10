@@ -17,8 +17,8 @@ int Monitor::setup_display()
 	display.setTextSize(1);
 	display.setTextColor(WHITE);
 	display.setCursor(0,0);
-	display.write('t');
-	display.drawCircle(3, 3, 8, WHITE);
+	// display.write('t');
+	// display.drawCircle(3, 3, 8, WHITE);
 	display.display();
 
 	return 0;
@@ -35,29 +35,33 @@ int Monitor::setup_mpc()
 
 void Monitor::watch_loop()
 {
+	mpc_client.update_status();
+	on_player();
+
 	void (Monitor::*playerCB)() = &Monitor::on_player;
-	mpc_client.set_callback_player(playerCB);
+	// mpc_client.set_callback_player(playerCB);
+	mpc_client.set_callback_player(this, playerCB);
 
 	mpc_client.loop();
 }
 
 void Monitor::on_player()
 {
-	// printf("notify\n");
+	printf("notify\n");
 	display.clearDisplay();
-	display.setTextColor(1);
+	display.setTextColor(WHITE);
 	display.setTextSize(1);
-	display.setTextWrap(true);
+	// display.setTextWrap(true);
 	switch (mpc_client.get_info_state()) {
 		case MPD_STATE_STOP:
-			display.fillRect(1, 1, 5, 5, 1);
+			display.fillRect(1, 1, 5, 5, WHITE);
 			break;
 		case MPD_STATE_PLAY:
-			display.fillTriangle(1, 1, 6, 3, 1, 6, 1);
+			display.fillTriangle(0, 0, 6, 3, 0, 6, WHITE);
 			break;
 		case MPD_STATE_PAUSE:
-			display.fillRect(1, 1, 2, 5, 1);
-			display.fillRect(4, 1, 2, 5, 1);
+			display.fillRect(0, 0, 2, 5, WHITE);
+			display.fillRect(4, 1, 2, 5, WHITE);
 			break;
 	}
 
@@ -67,7 +71,7 @@ void Monitor::on_player()
 	std::string mpc_title = mpc_client.get_info_title();
 	std::string mpc_album = mpc_client.get_info_album();
 
-	display.setCursor(0,6);
+	display.setCursor(0,10);
 	if (mpc_sample_rate > 0) {
 		display.printf("%iHz", mpc_sample_rate);
 		if (mpc_bits > 0) {
@@ -82,12 +86,16 @@ void Monitor::on_player()
 		}
 	}
 
-	display.setCursor(0, 14);
+	display.setCursor(0, 19);
 	if (!mpc_title.empty()) {
 		display.print(mpc_title.c_str());
+		printf("title: %s\n", mpc_title.c_str());
 	} else if (!mpc_album.empty()) {
 		display.print(mpc_album.c_str());
+		printf("album: %s\n", mpc_album.c_str());
 	}
+
+	display.display();
 }
 
 void Monitor::update_status()
