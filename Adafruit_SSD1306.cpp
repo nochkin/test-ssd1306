@@ -189,8 +189,7 @@ int Adafruit_SSD1306::init_i2c(int8_t RST, uint8_t ADDR) {
 		bcm2835_i2c_setSlaveAddress(_i2caddr);
 			
 		// Set clock to 400 KHz
-		// does not seem to work, will check this later
-		// bcm2835_i2c_set_baudrate(400000);
+		bcm2835_i2c_set_baudrate(400000);
 
 		// Setup reset pin direction as output
 		bcm2835_gpio_fsel(rst, BCM2835_GPIO_FSEL_OUTP);
