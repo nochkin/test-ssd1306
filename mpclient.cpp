@@ -9,6 +9,7 @@ MPClient::MPClient()
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
 
+	on_player_class = NULL;
 	on_player_cb = NULL;
 }
 
@@ -20,6 +21,7 @@ MPClient::MPClient(std::string host, uint16_t port)
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
 
+	on_player_class = NULL;
 	on_player_cb = NULL;
 }
 
@@ -79,7 +81,7 @@ void MPClient::update_status()
 	mpd_response_finish(my_mpd_conn);
 }
 
-void set_callback_player(Monitor *mon, void (Monitor::*callback_func)())
+void MPClient::set_callback_player(Monitor *mon, void (Monitor::*callback_func)())
 {
 	on_player_class = mon;
 	on_player_cb = callback_func;
@@ -93,9 +95,9 @@ void MPClient::loop()
 		if ((idle & MPD_IDLE_PLAYER) > 0) {
 			update_status();
 			print_status();
-			if (on_player_cb != NULL) {
-				Monitor mon_instance;
-				(mon_instance.*on_player_cb)();
+			if ((on_player_class != NULL) && (on_player_cb != NULL)) {
+				// Monitor mon_instance;
+				(*on_player_class.*on_player_cb)();
 			}
 		}
 		// printf("idle: %i\n", idle);
