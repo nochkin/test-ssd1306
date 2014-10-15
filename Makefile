@@ -1,7 +1,7 @@
 CC = clang
 CXX = clang++
-CFLAGS_DEBUG = -O0 -g -Wall -I.
-CFLAGS_OPT = -O3 -Wall -I. -march=armv6zk -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard
+CFLAGS_DEBUG = -O0 -g -Wall
+CFLAGS_OPT = -O3 -Wall -march=armv6zk -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard
 LINK = clang++
 LDFLAGS = -lmpdclient
 MKDIR = mkdir

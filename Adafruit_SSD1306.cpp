@@ -19,8 +19,8 @@ All text above, and the splash screen below must be included in any redistributi
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include <bcm2835.h>
 
+#include "bcm2835.h"
 #include "Adafruit_GFX.h"
 #include "Adafruit_SSD1306.h"
 

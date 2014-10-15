@@ -41,7 +41,7 @@ All text above, and the splash screen must be included in any redistribution
 #include <SPI.h>
 #endif
 
-#include <Adafruit_GFX.h>
+#include "Adafruit_GFX.h"
 
 // Configuration pins
 #define OLED_SPI_RESET RPI_V2_GPIO_P1_22 /* GPIO 25 pin 22  */
