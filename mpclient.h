@@ -10,6 +10,7 @@
 #include <mpd/status.h>
 #include <mpd/list.h>
 #include <mpd/player.h>
+#include <mpd/queue.h>
 #include <mpd/response.h>
 #include <mpd/song.h>
 #include <mpd/audio_format.h>
@@ -55,6 +56,7 @@ class MPClient
 		std::string get_info_album();
 		std::string get_info_artist();
 		std::string get_info_song_tag(mpd_tag_type tag_type);
+		void add_and_play(std::string playfile);
 		void loop();
 		void set_callback_player(Monitor *mon, void (Monitor::*callback_func)());
 	private:

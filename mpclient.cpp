@@ -81,10 +81,11 @@ void MPClient::update_status()
 	mpd_response_finish(my_mpd_conn);
 }
 
-void MPClient::set_callback_player(Monitor *mon, void (Monitor::*callback_func)())
+void MPClient::add_and_play(std::string playfile)
 {
-	on_player_class = mon;
-	on_player_cb = callback_func;
+	mpd_run_clear(my_mpd_conn);
+	mpd_run_add(my_mpd_conn, playfile.c_str());
+	mpd_run_play(my_mpd_conn);
 }
 
 void MPClient::loop()
@@ -102,6 +103,12 @@ void MPClient::loop()
 		// printf("idle: %i\n", idle);
 		usleep(100000);
 	}
+}
+
+void MPClient::set_callback_player(Monitor *mon, void (Monitor::*callback_func)())
+{
+	on_player_class = mon;
+	on_player_cb = callback_func;
 }
 
 void MPClient::print_status()
