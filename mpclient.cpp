@@ -83,9 +83,25 @@ void MPClient::update_status()
 
 void MPClient::add_and_play(std::string playfile)
 {
-	mpd_run_clear(my_mpd_conn);
-	mpd_run_add(my_mpd_conn, playfile.c_str());
-	mpd_run_play(my_mpd_conn);
+	bool status;
+	while (1) {
+		status = mpd_run_clear(my_mpd_conn);
+		if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
+			printf("error: %s\n", mpd_connection_get_error_message(my_mpd_conn));
+			break;
+		}
+		status = mpd_run_add(my_mpd_conn, playfile.c_str());
+		if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
+			printf("error: %s\n", mpd_connection_get_error_message(my_mpd_conn));
+			break;
+		}
+		status = mpd_run_play(my_mpd_conn);
+		if (mpd_connection_get_error(my_mpd_conn) != MPD_ERROR_SUCCESS) {
+			printf("error: %s\n", mpd_connection_get_error_message(my_mpd_conn));
+			break;
+		}
+		break;
+	}
 }
 
 void MPClient::loop()
