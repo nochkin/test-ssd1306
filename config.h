@@ -10,7 +10,7 @@ struct config_t
 class Config
 {
 	public:
-		static Config& getInstance()
+		static Config& get()
 		{
 			static Config instance;
 			return instance;
