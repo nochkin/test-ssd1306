@@ -26,7 +26,7 @@ All text above, and the splash screen must be included in any redistribution
 #endif
 #else
 #include <stdint.h>
-#include <bcm2835.h>
+#include "bcm2835.h"
 #endif
 
 #ifdef __SAM3X8E__

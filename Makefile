@@ -7,6 +7,7 @@ LDFLAGS = -lmpdclient
 MKDIR = mkdir
 RM = rm
 FIND = find
+STRIP = strip
 
 OBJDIR = .obj
 
@@ -16,7 +17,7 @@ INC = bcm2835.h ini.h
 INCXX = Adafruit_GFX.h Adafruit_SSD1306.h mpclient.h monitor.h INIReader.h config.h
 OBJ = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.c.o))
 OBJXX = $(patsubst %,$(OBJDIR)/%,$(SRCXX:.cpp=.cpp.o))
-BINARY = ssd1306-mpc
+BINARY = mpc-lcd
 
 ifeq ($(DEBUG),1)
 	CFLAGS := $(CFLAGS_DEBUG)
@@ -28,9 +29,9 @@ endif
 
 # Be silent per default, but 'make V=1' will show all compiler calls.
 ifneq ($(V),1)
-Q = @echo "[C  ] $< $(DEBUG_INFO)" &&
-QXX = @echo "[C++] $< $(DEBUG_INFO)" &&
-QLD = @echo "[Lnk] $(BINARY) $(DEBUG_INFO)" &&
+	Q = @echo "[C  ] $< $(DEBUG_INFO)" &&
+	QXX = @echo "[C++] $< $(DEBUG_INFO)" &&
+	QLD = @echo "[Lnk] $(BINARY) $(DEBUG_INFO)" &&
 endif
 
 all: $(OBJDIR) $(BINARY)
