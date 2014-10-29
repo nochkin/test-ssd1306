@@ -42,6 +42,7 @@ class MPClient
 		MPClient(std::string host, uint16_t);
 		~MPClient();
 		int connect();
+		int disconnect();
 		void update_status();
 		void print_status();
 

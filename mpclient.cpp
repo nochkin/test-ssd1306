@@ -6,6 +6,7 @@ MPClient::MPClient()
 	mpd_host = "";
 	mpd_port = 0;
 
+	my_mpd_conn = NULL;
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
 
@@ -21,12 +22,14 @@ MPClient::MPClient(std::string host, uint16_t port)
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
 
+	my_mpd_conn = NULL;
 	on_player_class = NULL;
 	on_player_cb = NULL;
 }
 
 MPClient::~MPClient()
 {
+	if (my_mpd_conn) mpd_connection_free(my_mpd_conn);
 	delete mpd_info_song;
 	delete mpd_info;
 }
@@ -38,6 +41,15 @@ int MPClient::connect()
 		return 1;
 	}
 	return 0;
+}
+
+int MPClient::disconnect()
+{
+	if (my_mpd_conn) {
+	       mpd_connection_free(my_mpd_conn);
+	       return 0;
+	}
+	return 1;
 }
 
 void MPClient::update_status()
@@ -117,6 +129,11 @@ void MPClient::loop()
 			}
 		}
 		// printf("idle: %i\n", idle);
+		if (idle == 0) {
+			this->disconnect();
+			usleep(10000000);
+			this->connect();
+		}
 		usleep(100000);
 	}
 }
