@@ -1,4 +1,3 @@
-#include "monitor.h"
 #include "mpclient.h"
 
 MPClient::MPClient()
@@ -9,9 +8,6 @@ MPClient::MPClient()
 	my_mpd_conn = NULL;
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
-
-	on_player_class = NULL;
-	on_player_cb = NULL;
 }
 
 MPClient::MPClient(std::string host, uint16_t port)
@@ -19,12 +15,9 @@ MPClient::MPClient(std::string host, uint16_t port)
 	mpd_host = host;
 	mpd_port = port;
 
+	my_mpd_conn = NULL;
 	mpd_info = new mpd_info_s;
 	mpd_info_song = new mpd_info_song_s;
-
-	my_mpd_conn = NULL;
-	on_player_class = NULL;
-	on_player_cb = NULL;
 }
 
 MPClient::~MPClient()
@@ -93,7 +86,23 @@ void MPClient::update_status()
 	mpd_response_finish(my_mpd_conn);
 }
 
-void MPClient::add_and_play(std::string playfile)
+bool MPClient::add_and_play(std::string playfile)
+{
+	bool status;
+	uint8_t tries = 3;
+
+	while (tries > 0) {
+		status = do_add_and_play(playfile);
+		if (status) break;
+		disconnect();
+		connect();
+		tries -= 1;
+	}
+
+	return status;
+}
+
+bool MPClient::do_add_and_play(std::string playfile)
 {
 	bool status;
 	while (1) {
@@ -114,34 +123,8 @@ void MPClient::add_and_play(std::string playfile)
 		}
 		break;
 	}
-}
 
-void MPClient::loop()
-{
-	while(1) {
-		mpd_idle idle = mpd_run_idle(my_mpd_conn);
-		// if (idle == 0) continue;
-		if ((idle & MPD_IDLE_PLAYER) > 0) {
-			update_status();
-			// print_status();
-			if ((on_player_class != NULL) && (on_player_cb != NULL)) {
-				(*on_player_class.*on_player_cb)();
-			}
-		}
-		// printf("idle: %i\n", idle);
-		if (idle == 0) {
-			this->disconnect();
-			usleep(10000000);
-			this->connect();
-		}
-		usleep(100000);
-	}
-}
-
-void MPClient::set_callback_player(Monitor *mon, void (Monitor::*callback_func)())
-{
-	on_player_class = mon;
-	on_player_cb = callback_func;
+	return status;
 }
 
 void MPClient::print_status()

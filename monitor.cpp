@@ -3,7 +3,7 @@
 Monitor::Monitor()
 {
 	Adafruit_SSD1306 display;
-	MPClient mpc_client;
+	MPClient_cb mpc_client;
 }
 
 int Monitor::setup_display()

@@ -1,7 +1,7 @@
 #ifndef _MONITOR_H
 #define _MONITOR_H
 
-#include "mpclient.h"
+#include "mpclient_cb.h"
 #include "Adafruit_SSD1306.h"
 
 class Monitor
@@ -14,7 +14,7 @@ class Monitor
 		void watch_loop();
 	private:
 		Adafruit_SSD1306 display;
-		MPClient mpc_client;
+		MPClient_cb mpc_client;
 
 		void update_status();
 };

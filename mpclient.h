@@ -33,11 +33,11 @@ struct mpd_info_song_s {
 	std::string artist;
 };
 
-class Monitor;
-
 class MPClient
 {
 	public:
+		struct mpd_connection *my_mpd_conn;
+
 		MPClient();
 		MPClient(std::string host, uint16_t);
 		~MPClient();
@@ -57,14 +57,11 @@ class MPClient
 		std::string get_info_album();
 		std::string get_info_artist();
 		std::string get_info_song_tag(mpd_tag_type tag_type);
-		void add_and_play(std::string playfile);
-		void loop();
-		void set_callback_player(Monitor *mon, void (Monitor::*callback_func)());
+		bool add_and_play(std::string playfile);
 	private:
 		std::string mpd_host;
 		uint16_t mpd_port;
 
-		struct mpd_connection *my_mpd_conn;
 		struct mpd_status *my_mpd_status;
 		struct mpd_song *my_mpd_song;
 		const struct mpd_audio_format *mpd_audio_format;
@@ -72,8 +69,7 @@ class MPClient
 		struct mpd_info_s *mpd_info;
 		struct mpd_info_song_s *mpd_info_song;
 
-		void (Monitor::*on_player_cb)();
-		Monitor *on_player_class;
+		bool do_add_and_play(std::string playfile);
 		std::string get_song_tag_or_empty(mpd_tag_type tag_type);
 };
 

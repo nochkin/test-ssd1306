@@ -12,9 +12,9 @@ STRIP = strip
 OBJDIR = .obj
 
 SRC = bcm2835.c ini.c
-SRCXX = main.cpp Adafruit_GFX.cpp Adafruit_SSD1306.cpp mpclient.cpp monitor.cpp INIReader.cpp config.cpp
+SRCXX = main.cpp Adafruit_GFX.cpp Adafruit_SSD1306.cpp mpclient.cpp mpclient_cb.cpp monitor.cpp INIReader.cpp config.cpp
 INC = bcm2835.h ini.h
-INCXX = Adafruit_GFX.h Adafruit_SSD1306.h mpclient.h monitor.h INIReader.h config.h
+INCXX = Adafruit_GFX.h Adafruit_SSD1306.h mpclient.h mpclient_cb.h monitor.h INIReader.h config.h
 OBJ = $(patsubst %,$(OBJDIR)/%,$(SRC:.c=.c.o))
 OBJXX = $(patsubst %,$(OBJDIR)/%,$(SRCXX:.cpp=.cpp.o))
 BINARY = mpc-lcd
