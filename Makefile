@@ -1,8 +1,8 @@
 CC = clang
 CXX = clang++
 CFLAGS_DEBUG = -O0 -g -Wall
-CFLAGS_OPT = -O3 -Wall -march=armv6zk -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard
-LINK = clang++
+CFLAGS_OPT = -O3 -Wall -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard # -march=armv6zk
+LINK = clang++ -static-libstdc++
 LDFLAGS = -lmpdclient
 MKDIR = mkdir
 RM = rm
@@ -22,6 +22,7 @@ BINARY = mpc-lcd
 ifeq ($(DEBUG),1)
 	CFLAGS := $(CFLAGS_DEBUG)
 	DEBUG_INFO = "\(Debug\)"
+	STRIP = ls -l
 else
 	CFLAGS := $(CFLAGS_OPT)
 	DEBUG_INFO = ""
@@ -47,6 +48,7 @@ $(OBJDIR)/%.cpp.o: %.cpp $(INCXX)
 
 $(BINARY): $(OBJ) $(OBJXX)
 	$(QLD)$(LINK) $(LDFLAGS) -o $(BINARY) $^
+	@$(STRIP) $(BINARY)
 
 clean:
 	$(FIND) $(OBJDIR) -type f -exec rm -f {} \;
