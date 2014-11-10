@@ -1,5 +1,7 @@
 #include "monitor.h"
 
+using namespace mpc_lcd;
+
 Monitor::Monitor()
 {
 	Adafruit_SSD1306 display;

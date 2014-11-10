@@ -1,5 +1,7 @@
 #include "mpclient.h"
 
+using namespace mpc_lcd;
+
 MPClient::MPClient()
 {
 	mpd_host = "";

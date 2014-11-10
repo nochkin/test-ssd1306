@@ -4,19 +4,21 @@
 #include "mpclient_cb.h"
 #include "Adafruit_SSD1306.h"
 
-class Monitor
-{
-	public:
-		Monitor();
-		int setup_display();
-		int setup_mpc();
-		void on_player();
-		void watch_loop();
-	private:
-		Adafruit_SSD1306 display;
-		MPClient_cb mpc_client;
+namespace mpc_lcd {
+	class Monitor
+	{
+		public:
+			Monitor();
+			int setup_display();
+			int setup_mpc();
+			void on_player();
+			void watch_loop();
+		private:
+			Adafruit_SSD1306 display;
+			MPClient_cb mpc_client;
 
-		void update_status();
-};
+			void update_status();
+	};
+}
 
 #endif

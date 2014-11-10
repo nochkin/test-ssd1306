@@ -1,5 +1,7 @@
 #include "config.h"
 
+using namespace mpc_lcd;
+
 config_t Config::config()
 {
 	return this->config_data;

@@ -1,5 +1,7 @@
 #include "mpclient_cb.h"
 
+using namespace mpc_lcd;
+
 MPClient_cb::MPClient_cb() : MPClient()
 {
 	on_player_class = NULL;

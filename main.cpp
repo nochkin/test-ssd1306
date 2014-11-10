@@ -5,6 +5,8 @@
 #include "config.h"
 #include "monitor.h"
 
+using namespace mpc_lcd;
+
 int usage(char *exec_name)
 {
 	printf("Usage:\n");
@@ -14,8 +16,6 @@ int usage(char *exec_name)
 
 int main(int argc, char *argv[])
 {
-	int err;
-	Monitor mon;
 	int c;
 	std::string cfg_file = "mpc-lcd.cfg";
 
@@ -33,13 +33,14 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	err = Config::get().load_config(cfg_file);
+	int err = Config::get().load_config(cfg_file);
 	if (err) {
 		fprintf(stderr, "Failed to load %s\n", cfg_file.c_str());
 		syslog(LOG_DAEMON|LOG_ERR, "Failed to load config\n");
 		return 101;
 	}
 
+	Monitor mon;
 	err = mon.setup_display();
 	if (err != 0) {
 		printf("Failed init OLED\n");

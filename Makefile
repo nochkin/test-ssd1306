@@ -1,9 +1,9 @@
-CC = clang
-CXX = clang++
-CFLAGS_DEBUG = -O0 -g -Wall
-CFLAGS_OPT = -O3 -Wall -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard # -march=armv6zk
-LINK = clang++ -static-libstdc++
-LDFLAGS = -lmpdclient
+CC = clang35
+CXX = clang++35
+CFLAGS_DEBUG = -O0 -g -Wall -I/usr/local/include -I./libmpdclient-2.9/include
+CFLAGS_OPT = -O3 -Wall -I/usr/local/include -I./libmpdclient-2.9/include -mcpu=arm1176jzf-s -mtune=arm1176jzf-s -mfpu=vfp -mfloat-abi=hard # -march=armv6zk
+LINK = clang++35
+LDFLAGS = -L./libmpdclient-2.9/src/.libs -lmpdclient
 MKDIR = mkdir
 RM = rm
 FIND = find
