@@ -43,20 +43,23 @@ int main(int argc, char *argv[])
 	Monitor mon;
 	err = mon.setup_display();
 	if (err != 0) {
-		printf("Failed init OLED\n");
-		return 101;
+		fprintf(stderr, "Failed init OLED\n");
+		syslog(LOG_DAEMON|LOG_ERR, "Failed init OLED\n");
+		return 102;
 	}
 
 	int uid = Config::get().config().uid;
-	printf("uid: %i\n", uid);
 	if (uid > 0) {
+		printf("Using uid: %i\n", uid);
+		syslog(LOG_DAEMON|LOG_INFO, "Using uid: %i\n", uid);
 		setuid(uid);
 	}
 
 	err = mon.setup_mpc();
 	if (err != 0) {
-		printf("Failed init mpc\n");
-		return 102;
+		fprintf(stderr, "Failed init mpc\n");
+		syslog(LOG_DAEMON|LOG_ERR, "Failed init mpc\n");
+		return 103;
 	}
 
 	mon.watch_loop();
