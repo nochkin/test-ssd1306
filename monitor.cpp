@@ -1,3 +1,6 @@
+#include <syslog.h>
+#include <mpd/status.h>
+
 #include "monitor.h"
 
 using namespace mpc_lcd;
@@ -89,9 +92,11 @@ void Monitor::on_player()
 	display.setCursor(0, 19);
 	if (!mpc_title.empty()) {
 		display.print(mpc_title.c_str());
+		syslog(LOG_DAEMON|LOG_INFO, "title: %s\n", mpc_title.c_str());
 		printf("title: %s\n", mpc_title.c_str());
 	} else if (!mpc_album.empty()) {
 		display.print(mpc_album.c_str());
+		syslog(LOG_DAEMON|LOG_INFO, "album: %s\n", mpc_album.c_str());
 		printf("album: %s\n", mpc_album.c_str());
 	}
 

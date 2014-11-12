@@ -19,9 +19,8 @@ namespace mpc_lcd {
 				static Config instance;
 				return instance;
 			}
-			config_t config();
-			int load_config(std::string);
-			void set_config(config_t);
+			config_t config()const;
+			int load_config(const std::string&);
 		private:
 			Config() {};
 			Config(Config const&);

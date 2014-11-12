@@ -1,3 +1,5 @@
+#include <mpd/idle.h>
+
 #include "mpclient_cb.h"
 
 using namespace mpc_lcd;

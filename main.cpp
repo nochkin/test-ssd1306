@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
 	int err = Config::get().load_config(cfg_file);
 	if (err) {
 		fprintf(stderr, "Failed to load %s\n", cfg_file.c_str());
-		syslog(LOG_DAEMON|LOG_ERR, "Failed to load config\n");
+		syslog(LOG_DAEMON|LOG_ERR, "Failed to load %s\n", cfg_file.c_str());
 		return 101;
 	}
 
