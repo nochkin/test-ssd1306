@@ -1,13 +1,17 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#include <stdint.h>
+
 #include "INIReader.h"
 
 namespace mpc_lcd {
 	struct config_t
 	{
-		std::string ssd3306_interface;
-		std::string ssd3306_i2c_address;
+		std::string ssd1306_interface;
+		std::string ssd1306_i2c_address;
+		std::string ssd1306_spi_cs;
+		uint8_t ssd1306_spi_cs_int;
 		int uid;
 	};
 
@@ -25,6 +29,8 @@ namespace mpc_lcd {
 			Config() {};
 			Config(Config const&);
 			void operator=(Config const&);
+
+			void tolower(std::string *);
 
 			config_t config_data;
 	};

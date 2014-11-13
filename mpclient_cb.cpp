@@ -30,9 +30,9 @@ void MPClient_cb::loop()
 		}
 		// printf("idle: %i\n", idle);
 		if (idle == 0) {
-			this->disconnect();
+			disconnect();
 			usleep(10000000);
-			this->connect();
+			connect();
 		}
 		usleep(100000);
 	}
