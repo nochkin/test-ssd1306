@@ -17,6 +17,7 @@ int Monitor::setup_display()
 		return 2;
 	}
 
+	display.dim(1);
 	display.clearDisplay();
 
 	display.setTextSize(1);
