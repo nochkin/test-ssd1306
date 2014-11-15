@@ -21,19 +21,21 @@ int Config::load_config(const std::string &cfg_file)
 	config_data.ssd1306_spi_cs = ini.Get("", "ssd1306_spi_cs", "cs0");
 	config_data.ssd1306_i2c_address = ini.Get("", "ssd1306_i2c_address", "");
 
-	this->tolower(&config_data.ssd1306_spi_cs);
+	this->tolower(config_data.ssd1306_spi_cs);
 
 	config_data.ssd1306_spi_cs_int = BCM2835_SPI_CS0;
 	if (config_data.ssd1306_spi_cs == "cs0") {
 		config_data.ssd1306_spi_cs_int = BCM2835_SPI_CS0;
 	} else if (config_data.ssd1306_spi_cs == "cs1") {
 		config_data.ssd1306_spi_cs_int = BCM2835_SPI_CS1;
+	} else {
+		return 1;
 	}
 
 	return 0;
 }
 
-void Config::tolower(std::string *input)
+void Config::tolower(std::string &input)
 {
-	std::transform(input->begin(), input->end(), input->begin(), ::tolower);
+	std::transform(input.begin(), input.end(), input.begin(), ::tolower);
 }

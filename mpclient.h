@@ -48,7 +48,6 @@ namespace mpc_lcd {
 			std::string get_info_title()const;
 			std::string get_info_album()const;
 			std::string get_info_artist()const;
-			std::string get_info_song_tag(mpd_tag_type tag_type)const;
 			bool add_and_play(const std::string &playfile);
 		private:
 			std::string mpd_host;
