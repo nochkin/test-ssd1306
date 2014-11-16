@@ -31,6 +31,8 @@ int main(int argc, char *argv[])
 		}
 	}
 
+	fprintf(stderr, "Loading %s config\n", cfg_file.c_str());
+	syslog(LOG_DAEMON|LOG_INFO, "mpc-lcd: loading %s config\n", cfg_file.c_str());
 	int err = Config::get().load_config(cfg_file);
 	if (err) {
 		fprintf(stderr, "Failed to load %s\n", cfg_file.c_str());
@@ -39,10 +41,12 @@ int main(int argc, char *argv[])
 	}
 
 	Monitor mon;
+	fprintf(stderr, "Initing LCD\n");
+	syslog(LOG_DAEMON|LOG_INFO, "mpc-lcd: initing LCD\n");
 	err = mon.setup_display();
 	if (err != 0) {
-		fprintf(stderr, "Failed init OLED\n");
-		syslog(LOG_DAEMON|LOG_ERR, "Failed init OLED\n");
+		fprintf(stderr, "Failed to init LCD\n");
+		syslog(LOG_DAEMON|LOG_ERR, "Failed to init LCD\n");
 		return 102;
 	}
 
@@ -53,13 +57,17 @@ int main(int argc, char *argv[])
 		setuid(uid);
 	}
 
+	fprintf(stderr, "Connecting to MPD\n");
+	syslog(LOG_DAEMON|LOG_INFO, "mpc-lcd: connecting to MPD\n");
 	err = mon.setup_mpc();
 	if (err != 0) {
-		fprintf(stderr, "Failed init mpc\n");
-		syslog(LOG_DAEMON|LOG_ERR, "Failed init mpc\n");
+		fprintf(stderr, "Failed to connect to MPD\n");
+		syslog(LOG_DAEMON|LOG_ERR, "Failed to connect to MPD\n");
 		return 103;
 	}
 
+	fprintf(stderr, "Serving requests\n");
+	syslog(LOG_DAEMON|LOG_INFO, "mpc-lcd: serving requests\n");
 	mon.watch_loop();
 
 	return 0;
