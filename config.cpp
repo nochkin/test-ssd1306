@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "bcm2835.h"
 
+#include "bcm2835.h"
 #include "config.h"
 
 using namespace mpc_lcd;

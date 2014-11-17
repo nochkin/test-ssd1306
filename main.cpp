@@ -26,10 +26,8 @@ int main(int argc, char *argv[])
 				break;
 			case 'h':
 				return usage(argv[0]);
-				break;
 			default:
 				return 1;
-				break;
 		}
 	}
 
